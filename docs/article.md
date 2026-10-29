@@ -4,7 +4,7 @@
 地域のゴミ出しルール（曜日・第何週）を一度登録すれば、**開くだけで今日・明日に何を出すかが分かる** Web アプリです。
 ログイン不要で、スマホのブラウザからすぐ使えます。
 
-- 公開 URL：【公開後に追記】
+- 公開 URL：https://gomi-calendar-lyart.vercel.app
 - GitHub：https://github.com/saitaka29-stack/gomi-calendar
 
 | 今日・明日・2 週間 | ルール設定 |
@@ -95,5 +95,5 @@ T-04〜T-06 を作ったあと Plan Mode に入り、データモデル・判定
 機能を MVP に絞ったぶん、日付の判定とテストに集中でき、「開くだけで今日の答えが出る」という目的にまっすぐ作れたと思います。
 
 ## リンク
-- 公開 URL：【公開後に追記】
+- 公開 URL：https://gomi-calendar-lyart.vercel.app
 - GitHub：https://github.com/saitaka29-stack/gomi-calendar
