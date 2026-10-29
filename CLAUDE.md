@@ -16,7 +16,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## コマンド
 - `npm run dev` — 開発サーバー（Vite）
 - `npm run build` — 型チェック（`tsc -b`）＋本番ビルド（`dist/`）
-- `npm run lint` — oxlint
+- `npm run lint` — oxlint（`react/only-export-components` が有効。コンポーネントのファイルからフックや関数を一緒に export しない）
 - `npm test` — Vitest を 1 回実行
 - 単一テスト: `npx vitest run src/lib/schedule.test.ts -t "テスト名"`
 
