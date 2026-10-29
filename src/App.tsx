@@ -1,122 +1,52 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useEffect, useReducer } from 'react'
+import { useHashView, useToday } from './hooks'
+import { reducer } from './lib/reducer'
+import { formatDate } from './lib/schedule'
+import { loadStore, saveStore } from './lib/storage'
+import { TEMPLATES } from './lib/templates'
+import { SettingsPage } from './pages/SettingsPage'
+import { TodayPage } from './pages/TodayPage'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [store, dispatch] = useReducer(reducer, undefined, loadStore)
+  const view = useHashView()
+  const today = useToday()
+
+  useEffect(() => saveStore(store), [store])
+
+  const applyTemplate = () => {
+    if (store.types.length > 0 && !confirm('登録しているゴミを、よくある例で置き換えます。よろしいですか？')) return
+    dispatch({ type: 'applyTemplate', types: TEMPLATES.map((t) => ({ ...t, id: crypto.randomUUID() })) })
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+    <main className="container">
+      <header className="app-header">
+        {view === 'settings' ? (
+          <>
+            <a href="#" className="back">
+              ← 戻る
+            </a>
+            <h1>ルール設定</h1>
+          </>
+        ) : (
+          <>
+            <div>
+              <h1>ゴミ出しカレンダー</h1>
+              <p className="sub">{formatDate(today)}</p>
+            </div>
+            <a href="#settings" className="settings-link">
+              ⚙ 設定
+            </a>
+          </>
+        )}
+      </header>
+      {view === 'settings' ? (
+        <SettingsPage types={store.types} dispatch={dispatch} onApplyTemplate={applyTemplate} />
+      ) : (
+        <TodayPage today={today} types={store.types} onStartTemplate={applyTemplate} />
+      )}
+      <footer className="app-footer">データはこの端末のブラウザ内にのみ保存されます</footer>
+    </main>
   )
 }
-
-export default App
