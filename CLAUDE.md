@@ -23,6 +23,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## 技術スタック
 React 19 + TypeScript + Vite。サーバー・DB なしの静的 SPA として Vercel にデプロイする。
 
+## アーキテクチャ
+- 状態は `App.tsx` の `useReducer` 1 つ（`Store = { version: 1, types: GarbageType[] }`）。変更のたびに localStorage（`gomi-calendar:v1`）へ保存
+- 画面はハッシュで 2 つ: `#settings` ならルール設定、それ以外はトップ（`hooks.ts` の `useHashView`）。ルーターや `vercel.json` は不要
+- 「今日」は `hooks.ts` の `useToday` が持ち、タブに戻ったとき（`visibilitychange`）に更新する。ページには `today` を props で渡し、ロジック側は引数の日付だけで判定する
+- 判定は `lib/schedule.ts`（`matches` / `typesOn` / `upcoming` / `describeRule`）。よくある例は `lib/templates.ts`
+
 ## プロジェクト固有ルール
 - **バックエンド・外部 API・解析タグを追加しない**。データは localStorage だけで扱う。
 - **日付の判定ロジックは `src/lib/` の純粋関数に置く**（`Date` を引数で受け取り、内部で `new Date()` を呼ばない）。変更したら必ずテストを更新して `npm test` を通す。
